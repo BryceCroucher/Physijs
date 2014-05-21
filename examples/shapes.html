@@ -83,7 +83,7 @@
 		ground_material = Physijs.createMaterial(
 			new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture( 'images/rocks.jpg' ) }),
 			.8, // high friction
-			.4 // low restitution
+			40 // low restitution
 		);
 		ground_material.map.wrapS = ground_material.map.wrapT = THREE.RepeatWrapping;
 		ground_material.map.repeat.set( 2.5, 2.5 );
@@ -152,7 +152,7 @@
 			cylinder_geometry = new THREE.CylinderGeometry( 2, 2, 1, 32 ),
 			cone_geometry = new THREE.CylinderGeometry( 0, 2, 4, 32 ),
 			octahedron_geometry = new THREE.OctahedronGeometry( 1.7, 1 ),
-			torus_geometry = new THREE.TorusKnotGeometry ( 1.7, .2, 32, 4 ),
+			torus_geometry = new THREE.TorusGeometry ( 1.7, .2, 4, 12 ),
 			doCreateShape;
 		
 		setTimeout(
@@ -165,71 +165,84 @@
 				}
 			}
 		);
-			
+
+var count = 0;			
 		doCreateShape = function() {
 			var shape, material = new THREE.MeshLambertMaterial({ opacity: 0, transparent: true });
+
 			
-			switch ( Math.floor(Math.random() * 6) ) {
-				case 0:
-					shape = new Physijs.BoxMesh(
-						box_geometry,
-						material
-					);
-					break;
+//			switch ( Math.floor(Math.random() * 2) ) {
+// 				case 0:
+// 					shape = new Physijs.BoxMesh(
+// 						box_geometry,
+// 						material
+// 					);
+// 					break;
+// 				
+// 				case 1:
+// 					shape = new Physijs.SphereMesh(
+// 						sphere_geometry,
+// 						material,
+// 						undefined,
+// 						{ restitution: Math.random() * 1.5 }
+// 					);
+// 					break;
+// 				
+// 				case 2:
+// 					shape = new Physijs.CylinderMesh(
+// 						cylinder_geometry,
+// 						material
+// 					);
+// 					break;
+// 			
+if ( count++ == 0 )	
+{
+ 				//case 0:
+ 					shape = new Physijs.ConeMesh(
+ 						cone_geometry,
+ 						material,
+ 						0
+ 					);
+ 					
+ 				
+ 				//	break;
+ }
+// 				
+// 				case 4:
+// 					shape = new Physijs.ConvexMesh(
+// 						octahedron_geometry,
+// 						material
+// 					);
+// 					break;
 				
-				case 1:
-					shape = new Physijs.SphereMesh(
-						sphere_geometry,
-						material,
-						undefined,
-						{ restitution: Math.random() * 1.5 }
-					);
-					break;
-				
-				case 2:
-					shape = new Physijs.CylinderMesh(
-						cylinder_geometry,
-						material
-					);
-					break;
-				
-				case 3:
-					shape = new Physijs.ConeMesh(
-						cone_geometry,
-						material
-					);
-					break;
-				
-				case 4:
-					shape = new Physijs.ConvexMesh(
-						octahedron_geometry,
-						material
-					);
-					break;
-				
-				case 5:
-					shape = new Physijs.ConvexMesh(
+				//case 1:
+else
+{				
+					shape = new Physijs.ConcaveMesh(
 						torus_geometry,
 						material
 					);
-					break;
-			}
+}
+				//	break;
+			//}
 				
 			shape.material.color.setRGB( Math.random() * 100 / 100, Math.random() * 100 / 100, Math.random() * 100 / 100 );
 			shape.castShadow = true;
 			shape.receiveShadow = true;
 			
 			shape.position.set(
-				Math.random() * 30 - 15,
-				20,
-				Math.random() * 30 - 15
+				0, //Math.random() * 30 - 15,
+				count > 1 ? 20 : 3,
+				0 //Math.random() * 30 - 15
 			);
-			
-			shape.rotation.set(
-				Math.random() * Math.PI,
-				Math.random() * Math.PI,
-				Math.random() * Math.PI
-			);
+
+if (count > 1) {			
+ 			shape.rotation.set(
+ 				Math.random() * Math.PI,
+ 				Math.random() * Math.PI,
+ 				Math.random() * Math.PI
+ 			);
+ }
 			
 			if ( addshapes ) {
 				shape.addEventListener( 'ready', createShape );
@@ -242,7 +255,7 @@
 		};
 		
 		return function() {
-			setTimeout( doCreateShape, 250 );
+			setTimeout( doCreateShape, 2000 );
 		};
 	})();
 	
